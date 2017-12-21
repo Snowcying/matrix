@@ -1,27 +1,34 @@
 import React from 'react'
 import {Component}  from 'react'
-import {Button} from 'antd'
+import {Button,Input,InputNumber,Form} from 'antd'
 import './Matrix.css'
 
 
-export default  class Matrix extends  Component{
+const FormItem=Form.Item
+
+const formLayout = {
+    labelCol: {
+        span: 4
+    },
+    wrapperCol: {
+        span: 8
+    }
+};
+
+class Matrix extends  Component{
     constructor(){
         super();
         this.state={
             mu:3,
             nu:3,
-            tu:2,
-            Ftu:3,
-            Stu:5,
-            list1:[],
-            list2:[],
-            ans:[],
-            FirstListM:[1,1,1],
-            FirstListN:[1,2,3],
-            FirstListE:[99,33,11],
-            SecondListM:[1,2,1,3,2],
-            SecondListN:[2,3,1,1,1],
-            SecondListE:[7,199,100,200,30]
+            Ftu:9,
+            Stu:9,
+            FirstListM:[1,1,1,2,2,2,3,3,3],
+            FirstListN:[1,2,3,1,2,3,1,2,3],
+            FirstListE:[1,2,3,4,5,6,7,8,9],
+            SecondListM:[1,1,1,2,2,2,3,3,3],
+            SecondListN:[1,2,3,1,2,3,1,2,3],
+            SecondListE:[9,8,7,6,5,4,3,2,1]
         }
     };
 
@@ -37,25 +44,9 @@ export default  class Matrix extends  Component{
        }
     }
 
-    // handleInputEvent(e,num){
-    //     var value=e.target.value;
-    //     var list=value.split(',');
-    //     if(num==='1') this.setState({list1:[...this.state.list1,...list]})
-    //     else this.setState({list2:[...this.state.list2,...list]})
-    //     e.target.value='';
-    //
-    // }
-
     handleInputEvent(e,num){
         var value=e.target.value;
         var list =value.split(',');
-        // if(num=='1') this.setState({
-        //     list1:this.state.list1.push(list[0])
-        // })
-        // this.setState({
-        //     list1:[...this.state.list1,[1,2,3]]
-        // })
-        // console.log(list1)
         if(num==='1'){
             this.setState({
                 FirstListM:[...this.state.FirstListM,list[0]],
@@ -73,59 +64,7 @@ export default  class Matrix extends  Component{
         }
     }
 
-    handleMulti(){
-        var arrone=new Array(4);
-        var arrtwo=new Array(4);
-        for(var i=1;i<=2;i++){
-            arrone[i]=new Array(4);
-            arrtwo[i]=new Array(4);
-            for(var j=1;j<=2;j++){
-                arrone[i][j]=0;
-                arrtwo[i][j]=0;
 
-            }
-        }
-
-        var listone=this.state.list1
-        var lenthone=listone.length;
-
-        var listtwo=this.state.list2
-        var lenthtwo=listtwo.length;
-        for(i=0;i<lenthone;i=i+3){
-            // console.log(listone[0],listone[1],listone[2]);
-            var I=i;
-            var J=i+1;
-            var E=i+2;
-            arrone[listone[I]][listone[J]]=listone[E];
-        }  for(i=0;i<lenthtwo;i=i+3){
-            // console.log(listone[0],listone[1],listone[2]);
-             I=i;
-             J=i+1;
-             E=i+2;
-            arrtwo[listtwo[I]][listtwo[J]]=listtwo[E];
-        }
-        var ans=this.state.ans;
-        for(i=1;i<=2;i++){
-            ans[i]=new Array(4);
-            for(  j=1;j<=2;j++){
-                // console.log(arrone[i][j]+' ');
-                ans[i][j]=Number(arrone[i][j])+Number(arrtwo[i][j]);
-            }
-        }
-
-        // for(i=1;i<=2;i++)
-        //     for(j=1;j<=2;j++)
-        //         console.log(ans[i][j]);
-        this.setState({
-            ans:[ans[1],ans[2]]
-        })
-    }
-
-    // handleShowAns(){
-    //     return{<div>
-    //         123
-    //     </div>}
-    // }
 
 
     showArrayMatrix(array){
@@ -151,7 +90,7 @@ export default  class Matrix extends  Component{
         document.body.appendChild(document.createElement("br"))
 
 
-        console.log(array)
+        // console.log(array)
 
     };
 
@@ -226,10 +165,11 @@ export default  class Matrix extends  Component{
         for( i=0;i<M;i++){
             for( j=0;j<N;j++ ){
                 for( var k=0;k<K;k++){
-                    ans[i][j]=Number(array1[i][k])*Number(array2[k][j])
+                    ans[i][j]+=Number(array1[i][k])*Number(array2[k][j])
                 }
             }
         }
+        // console.log(ans[0][0])
         this.showArrayMatrix(ans)
         for( i=0;i<M;i++){
             for( j=0;j<N;j++){
@@ -245,44 +185,76 @@ export default  class Matrix extends  Component{
         // var array=[[19,2,3],[3,0,1]];
         var array1=[],array2=[];
         var ans=[];
+        const {form}=this.props
+        const {getFieldDecorator}=form
+
 
         return(
             <div>
-                <input type="text" onBlur={(e)=>{this.hanleOnclickEvent(e,'mu')}}/>
-                <input type="text"  onBlur={(e)=>{this.hanleOnclickEvent(e,'nu')}}/>
-                <input type="text" onBlur={(e)=>{this.hanleOnclickEvent(e,'tu')}}/>
+                <InputNumber placeholder="行数" className="input" onBlur={(e)=>{this.hanleOnclickEvent(e,'mu')}}/>
+                <InputNumber placeholder="列数" className="input"  onBlur={(e)=>{this.hanleOnclickEvent(e,'nu')}}/>
                 <Button type="primary">提交</Button>
                 <br/>
-                {this.state.mu+" "+this.state.nu+" "+this.state.tu}
                 <br/>
 
 
-                <input type="text" onBlur={(e)=>{this.handleInputEvent(e,'1')}}/>
-                <input type="text" onBlur={(e)=>{this.handleInputEvent(e,'2')}}/>
-                <Button type="primary" onClick={()=>{this.toArrayMatrix(array1,array2)}}>提交</Button>
+                <Form layout="inline">
+                    <FormItem label='矩阵一' {...formLayout}>
+                        {getFieldDecorator('matrix1',{
+                            rules:[
+                                {
+                                    required:false
+                                },
+                                {
+                                    pattern:/\d,\d,\d/,
+                                    message:'例如：1，2，3'
+                                }
+                            ]
+                        })(
+                            <Input type='text'  className="input" placeholder="输入三元组，例如:1,2,3" onBlur={(e)=>{this.handleInputEvent(e,'1')}}/>
+                        )}
+                    </FormItem>
+                    <FormItem label='矩阵二' {...formLayout}>
+                        {getFieldDecorator('matrix2',{
+                            rules:[
+                                {
+                                    required:false
+                                },
+                                {
+                                    pattern:/\d,\d,\d/,
+                                    message:'例如：1，2，3'
+                                }
+                            ]
+                        })(
+                            <Input type='text'  className="input" placeholder="输入三元组，例如:1,2,3" onBlur={(e)=>{this.handleInputEvent(e,'2')}} />
+                        )}
+                    </FormItem>
+                    <Button type="primary" onClick={()=>{this.toArrayMatrix(array1,array2)}}  icon="upload" >提交</Button>
+
+                </Form>
+
+                {/*<Input className="input" placeholder="例如:1,2,3" onBlur={(e)=>{this.handleInputEvent(e,'1')}}/>*/}
+                {/*<Input className="input" placeholder="例如:1,2,3" type="text" onBlur={(e)=>{this.handleInputEvent(e,'2')}}/>*/}
+                {/*<Button type="primary" onClick={()=>{this.toArrayMatrix(array1,array2)}}  icon="upload" >提交</Button>*/}
                 <div>
-
-
                     <br/>
-                    <Button type="primary" onClick={()=>{this.showArrayMatrix(array1,array2)}}>输出矩阵1</Button>
-                    <Button type="primary" onClick={()=>{this.showArrayMatrix(array2,array1)}}>输出矩阵2</Button>
+                    <Button type="primary" onClick={()=>{this.showArrayMatrix(array1,array2)}} icon="appstore">输出矩阵1</Button>
+                    <Button type="primary" onClick={()=>{this.showArrayMatrix(array2,array1)}} icon="appstore">输出矩阵2</Button>
                     <br/>
                     <br/>
-                    <Button type="primary" onClick={()=>{this.SumSub(array1,array2,ans,"sum")}}>加法</Button>
 
-                    <Button type="primary" onClick={()=>{this.SumSub(array1,array2,ans,"sub")}}>减法</Button>
-                    <br/>
-                    <Button type="primary" onClick={()=>{this.Multi(array1,array2,ans)}}>乘法</Button>
+                    <Button type="primary" onClick={()=>{this.SumSub(array1,array2,ans,"sum")}} icon="plus">加法</Button>
+                    <Button type="primary" onClick={()=>{this.SumSub(array1,array2,ans,"sub")}} icon="minus">减法</Button>
 
+                    <Button type="primary" onClick={()=>{this.Multi(array1,array2,ans)}} icon="close">乘法</Button>
 
                 </div>
                 <br/>
-
-
-
 
             </div>
         )
     }
 }
+Matrix=Form.create()(Matrix)
+export default Matrix
 
