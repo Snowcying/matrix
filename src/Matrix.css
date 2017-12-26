@@ -1,7 +1,38 @@
 .newButton{
     height: 60px;
     width: 60px;
+    background: rgba(0, 0, 0, 0.65);
+    color: white;
+
 }
 .input{
     width: 300px;
+    margin: 0px;
 }
+#components-layout-demo-side .logo {
+    height: 32px;
+    background: rgba(255,255,255,.2);
+    margin: 16px;
+}
+#box-matrix #left{
+    float :left;
+    width: 50%;
+    /*background: antiquewhite;*/
+}
+#box-matrix #right{
+    float:right;
+    width: 50%;
+    /*background: aqua;*/
+}
+
+#ans{
+    /*background: bisque;*/
+    width: 300px;
+    margin-left: 300px;
+
+}
+.Link{
+    color:rgba(255, 255, 255, 0.65);
+
+}
+

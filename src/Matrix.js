@@ -1,9 +1,10 @@
 import React from 'react'
 import {Component}  from 'react'
-import {Button,Input,InputNumber,Form} from 'antd'
+import {Button,Input,InputNumber,Form,Layout, Menu,Icon ,Breadcrumb} from 'antd'
+import {browserHistory} from 'react-router'
 import './Matrix.css'
-
-
+const { Header, Content, Footer, Sider } = Layout;
+const SubMenu = Menu.SubMenu;
 const FormItem=Form.Item
 
 const formLayout = {
@@ -19,6 +20,7 @@ class Matrix extends  Component{
     constructor(){
         super();
         this.state={
+            collapsed: false,
             mu:3,
             nu:3,
             Ftu:9,
@@ -28,10 +30,16 @@ class Matrix extends  Component{
             FirstListE:[1,2,3,4,5,6,7,8,9],
             SecondListM:[1,1,1,2,2,2,3,3,3],
             SecondListN:[1,2,3,1,2,3,1,2,3],
-            SecondListE:[9,8,7,6,5,4,3,2,1]
+            SecondListE:[9,8,7,6,5,4,3,2,1],
+            leftExist:false,
+            rightExist:false,
+            ansExist:false
         }
     };
-
+    onCollapse = (collapsed) => {
+        console.log(collapsed);
+        this.setState({ collapsed });
+    }
     hanleOnclickEvent(e,name){
 
         const value=e.target.value;
@@ -67,31 +75,63 @@ class Matrix extends  Component{
 
 
 
-    showArrayMatrix(array){
+    showArrayMatrix(array,key,Exist){
 
         var m=array.length;
         var n=array[0].length;
+        var oTest = document.getElementById("box-matrix")
+        // let leftExist=this.state.leftExist
+        // let rightExist=this.state.rightExist;
+        // let ansExist=this.state.ansExist;
 
-        for(var i=0;i<m;i++)
-        {
-            for(var j=0;j<n;j++)
-            {
 
 
-                    var btn=document.createElement("BUTTON");
-                    btn.className="newButton"
-                    var t=document.createTextNode(array[i][j]);
-                    btn.appendChild(t);
-                    document.body.appendChild(btn);
+            oTest=document.getElementById(key)
+            if(!Exist){
+                let num=1;
+                for(var i=0;i<m;i++)
+                {
 
+                    for(var j=0;j<n;j++)
+                    {
+                        var btn=document.createElement("BUTTON");
+                        btn.className="newButton"
+                        btn.id=key+num;
+                        num++;
+                        var t=document.createTextNode(array[i][j]);
+                        btn.appendChild(t);
+                        oTest.appendChild(btn);
+                        if(key==="left"){
+                            this.setState({
+                        leftExist:true
+                        })
+                        }else if(key==="right"){
+                            this.setState({
+                                rightExist:true
+                            })
+                        }else if(key==="ans"){
+                            this.setState({
+                                ansExist:true
+                            })
+                        }
+
+                    }
+                    oTest.appendChild(document.createElement("br"))
+                }
+                oTest.appendChild(document.createElement("br"))
             }
-            document.body.appendChild(document.createElement("br"))
-        }
-        document.body.appendChild(document.createElement("br"))
+            else{
+                let num=1;
+                for(i=0;i<m;i++){
+                    for(j=0;j<n;j++){
+                        let id=key+num;
+                        num++;
+                        let button=document.getElementById(id);
+                        button.innerHTML=array[i][j];
 
-
-        // console.log(array)
-
+                    }
+                }
+            }
     };
 
     toArrayMatrix(array1,array2){
@@ -113,8 +153,8 @@ class Matrix extends  Component{
         for(i=0;i<Stu;i++){
             array2[this.state.SecondListM[i]-1][this.state.SecondListN[i]-1]=Number(this.state.SecondListE[i])
         }
-
     }
+
 
     SumSub(array1,array2,ans,type){
 
@@ -142,7 +182,7 @@ class Matrix extends  Component{
             }
         }
 
-        this.showArrayMatrix(ans)
+        this.showArrayMatrix(ans,"ans",this.state.ansExist)
         for( i=0;i<m;i++){
             for( j=0;j<n;j++){
                 ans[i][j]=0;
@@ -170,7 +210,7 @@ class Matrix extends  Component{
             }
         }
         // console.log(ans[0][0])
-        this.showArrayMatrix(ans)
+        this.showArrayMatrix(ans,"ans",this.state.ansExist)
         for( i=0;i<M;i++){
             for( j=0;j<N;j++){
                 ans[i][j]=0;
@@ -179,6 +219,17 @@ class Matrix extends  Component{
 
 
     }
+
+    onClickEvent(e){
+        e.preventDefault();
+        browserHistory.push(`/cxy`)
+    }
+
+    onClickBack(e){
+        e.preventDefault();
+        browserHistory.push(`/`)
+    }
+
 
     render(){
 
@@ -190,68 +241,137 @@ class Matrix extends  Component{
 
 
         return(
-            <div>
-                <InputNumber placeholder="行数" className="input" onBlur={(e)=>{this.hanleOnclickEvent(e,'mu')}}/>
-                <InputNumber placeholder="列数" className="input"  onBlur={(e)=>{this.hanleOnclickEvent(e,'nu')}}/>
-                <Button type="primary">提交</Button>
-                <br/>
-                <br/>
+
+            <Layout style={{ minHeight: '100vh' }}>
+                <Sider
+                    collapsible
+                    collapsed={this.state.collapsed}
+                    onCollapse={this.onCollapse}
+                >
+                    <div className="logo" />
+                    <Menu theme="dark" defaultSelectedKeys={['1']} mode="inline">
+                        <Menu.Item key="1">
+                            <Icon type="appstore" />
+                            <span>矩阵</span>
+                        </Menu.Item>
+                        <Menu.Item key="2" >
+                            <div >
+                                <Icon type="desktop" />
+                                <span>主程序</span>
+                            </div>
+
+                        </Menu.Item>
+                        <SubMenu
+                            key="sub1"
+                            title={<span><Icon type="user" /><span>制作者</span></span>}
+                        >
+                            <Menu.Item key="3" ><span onClick={(e)=>{this.onClickEvent(e)}}>陈鑫一</span></Menu.Item>
+                        </SubMenu>
 
 
-                <Form layout="inline">
-                    <FormItem label='矩阵一' {...formLayout}>
-                        {getFieldDecorator('matrix1',{
-                            rules:[
-                                {
-                                    required:false
-                                },
-                                {
-                                    pattern:/\d,\d,\d/,
-                                    message:'例如：1，2，3'
-                                }
-                            ]
-                        })(
-                            <Input type='text'  className="input" placeholder="输入三元组，例如:1,2,3" onBlur={(e)=>{this.handleInputEvent(e,'1')}}/>
-                        )}
-                    </FormItem>
-                    <FormItem label='矩阵二' {...formLayout}>
-                        {getFieldDecorator('matrix2',{
-                            rules:[
-                                {
-                                    required:false
-                                },
-                                {
-                                    pattern:/\d,\d,\d/,
-                                    message:'例如：1，2，3'
-                                }
-                            ]
-                        })(
-                            <Input type='text'  className="input" placeholder="输入三元组，例如:1,2,3" onBlur={(e)=>{this.handleInputEvent(e,'2')}} />
-                        )}
-                    </FormItem>
-                    <Button type="primary" onClick={()=>{this.toArrayMatrix(array1,array2)}}  icon="upload" >提交</Button>
+                    </Menu>
+                </Sider>
+                <Layout>
+                    <Header style={{ background: '#fff', padding: 0 }} />
+                    <Content style={{ margin: '0 16px' }}>
+                        <Breadcrumb style={{ margin: '16px 0' }}>
+                            <Breadcrumb.Item>课程设计</Breadcrumb.Item>
+                            <Breadcrumb.Item>陈鑫一</Breadcrumb.Item>
+                        </Breadcrumb>
+                        <div style={{ padding: 24, background: '#fff', minHeight: 360 }}>
+                            <div>
+                            <InputNumber placeholder="行数" className="input" onBlur={(e)=>{this.hanleOnclickEvent(e,'mu')}}/>
+                            <InputNumber placeholder="列数" className="input"  onBlur={(e)=>{this.hanleOnclickEvent(e,'nu')}}/>
+                            <Button type="primary" style={{}} icon="upload" >提交</Button>
+                            <br/>
+                            <br/>
 
-                </Form>
 
-                {/*<Input className="input" placeholder="例如:1,2,3" onBlur={(e)=>{this.handleInputEvent(e,'1')}}/>*/}
-                {/*<Input className="input" placeholder="例如:1,2,3" type="text" onBlur={(e)=>{this.handleInputEvent(e,'2')}}/>*/}
-                {/*<Button type="primary" onClick={()=>{this.toArrayMatrix(array1,array2)}}  icon="upload" >提交</Button>*/}
-                <div>
-                    <br/>
-                    <Button type="primary" onClick={()=>{this.showArrayMatrix(array1,array2)}} icon="appstore">输出矩阵1</Button>
-                    <Button type="primary" onClick={()=>{this.showArrayMatrix(array2,array1)}} icon="appstore">输出矩阵2</Button>
-                    <br/>
-                    <br/>
+                            <Form layout="inline">
+                                <FormItem label='矩阵一' {...formLayout}>
+                                    {getFieldDecorator('matrix1',{
+                                        rules:[
+                                            {
+                                                required:false
+                                            },
+                                            {
+                                                pattern:/\d,\d,\d/,
+                                                message:'例如：1，2，3'
+                                            }
+                                        ]
+                                    })(
+                                        <Input type='text'  className="input" placeholder="输入三元组，例如:1,2,3" onBlur={(e)=>{this.handleInputEvent(e,'1')}}/>
+                                    )}
+                                </FormItem>
+                                <FormItem label='矩阵二' {...formLayout}>
+                                    {getFieldDecorator('matrix2',{
+                                        rules:[
+                                            {
+                                                required:false
+                                            },
+                                            {
+                                                pattern:/\d,\d,\d/,
+                                                message:'例如：1，2，3'
+                                            }
+                                        ]
+                                    })(
+                                        <Input type='text'  className="input" placeholder="输入三元组，例如:1,2,3" onBlur={(e)=>{this.handleInputEvent(e,'2')}} />
+                                    )}
+                                </FormItem>
+                                <Button type="primary" onClick={()=>{this.toArrayMatrix(array1,array2)}}  icon="upload" >提交</Button>
 
-                    <Button type="primary" onClick={()=>{this.SumSub(array1,array2,ans,"sum")}} icon="plus">加法</Button>
-                    <Button type="primary" onClick={()=>{this.SumSub(array1,array2,ans,"sub")}} icon="minus">减法</Button>
+                            </Form>
 
-                    <Button type="primary" onClick={()=>{this.Multi(array1,array2,ans)}} icon="close">乘法</Button>
+                            <div>
+                                <br/>
+                                <Button type="primary" onClick={()=>{this.showArrayMatrix(array1,"left",this.state.leftExist)}} icon="appstore">输出矩阵1</Button>
+                                <Button type="primary" onClick={()=>{this.showArrayMatrix(array2,"right",this.state.rightExist)}} icon="appstore">输出矩阵2</Button>
+                                <br/>
+                                <br/>
 
-                </div>
-                <br/>
+                                <Button type="primary" onClick={()=>{this.SumSub(array1,array2,ans,"sum")}} icon="plus">加法</Button>
+                                <Button type="primary" onClick={()=>{this.SumSub(array1,array2,ans,"sub")}} icon="minus">减法</Button>
 
-            </div>
+                                <Button type="primary" onClick={()=>{this.Multi(array1,array2,ans)}} icon="close">乘法</Button>
+                                {/*<Button type="primary" onClick={(e)=>{this.refresh(e)}} icon="close">重置</Button>*/}
+
+                            </div>
+                            <br/>
+                        </div>
+                        </div>
+
+                        <div id="box-matrix">
+                            <div id="left">
+                                {this.state.leftExist?"Matrix1:":""}
+                                <br/>
+                            </div>
+                            <div id="right">
+                                {this.state.rightExist?"Matrix2:":""}
+                                <br/>
+                            </div>
+                            <div id="ans">
+                                {/*{this.state.ansExist?"Matrix3:":""}*/}
+
+                            </div>
+
+                        </div>
+
+                    </Content>
+                    <Footer style={{ textAlign: 'center' }}>
+                        Ant Design ©2017 Created by cxy
+                    </Footer>
+                </Layout>
+            </Layout>
+
+
+
+
+
+
+
+
+
+
         )
     }
 }
